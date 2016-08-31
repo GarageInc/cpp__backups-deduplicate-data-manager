@@ -14,27 +14,27 @@ int main(int argc, char *argv[])
 	char symbol;
 	uint64_t block_id;
 	byte* block_data = new byte[BLOK_SIZE]();
-	byte input = NULL;
+	byte input = ' ';
 	
 	while (true) {
 
-		printf("\n\nIf you want put block, press 0, if you want get block, press 1...\n");
-
+		printf("\nIf you want put block, press 0, if you want get block, press 1, press another for break...\n");
+				
 		scanf("%c", &symbol);
+		
+		printf("[%c]", symbol);
 
 		if (symbol == '0' || symbol=='1') {
 
 			printf("Enter BLOCK_ID: ");
-			scanf("%d", &block_id);
+			scanf("%ju", &block_id);
 
 			if (symbol == '0') {
 
 				printf("Please, enter data: ");
-				for (uint32_t i = 0; i < BLOK_SIZE-1 && input != '\0'; i++) {
 
-					scanf("%c", &input);
-					block_data[i] = input;
-				}
+				scanf("%s", block_data);
+				
 				block_data[BLOK_SIZE - 1] = '\0';
 
 				manager->put_block(block_id, block_data);
@@ -57,7 +57,8 @@ int main(int argc, char *argv[])
 			}
 
 		} else {
-			// pass
+
+			// break;
 		}
 
 	}

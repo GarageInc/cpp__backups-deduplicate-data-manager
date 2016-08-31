@@ -29,10 +29,10 @@ protected:
 	
 	char *file_name;
 
-	uint32_t max_file_name_length = 20;
+	uint32_t max_file_name_length = 6;
 	
 	FILE * pFile;
 
 	// save id_block and offset in file
-	std::vector<Block> blocks;
+	std::vector<Block*> blocks;
 };

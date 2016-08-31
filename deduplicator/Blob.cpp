@@ -19,18 +19,19 @@ void Blob::init() {
 
 	char alphanum[] =
 		"0123456789"
-		"!@#$%^&*"
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		"abcdefghijklmnopqrstuvwxyz";
 
 	int string_length = sizeof(alphanum) - 1;
 
-	for (unsigned int i = 0; i < max_file_name_length; ++i)
+	for (unsigned int i = 0; i < max_file_name_length - 1; ++i)
 	{
 		file_name[i] = alphanum[rand() % string_length];
 	}
 
-	pFile = fopen(file_name, "a+b");
+	file_name[max_file_name_length - 1] = '\0';
+
+	pFile = fopen(file_name, "a+");
 }
 
 uint32_t Blob::get_block_data(uint64_t id_block, uint64_t block_size, byte *data) {
@@ -40,8 +41,8 @@ uint32_t Blob::get_block_data(uint64_t id_block, uint64_t block_size, byte *data
 		Block *block = NULL;
 
 		for (int i = 0; i < blocks.size(); i++) {
-			if (blocks[i].id == id_block) {
-				block = &blocks[i];
+			if (blocks[i]->id == id_block) {
+				block = blocks[i];
 				break;
 			}
 		}
@@ -78,14 +79,14 @@ uint32_t Blob::save(uint64_t block_id, const byte * block_data, uint64_t block_s
 
 		fflush(pFile);
 		
-		Block block;
+		Block *block = new Block();
 
-		block.offset = offset;
-		block.id = block_id;
+		block->offset = offset;
+		block->id = block_id;
 
 		blocks.push_back(block);
 		
-		return block.id;
+		return block->id;
 
 	} catch( ...){
 	

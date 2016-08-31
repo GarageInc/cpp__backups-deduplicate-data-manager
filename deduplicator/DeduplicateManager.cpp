@@ -21,7 +21,7 @@ int DeduplicateManager::put_block(uint64_t block_id, const byte* block_data) {
 	
 	uint64_t data_hash = hash(block_data);
 
-	if ( blocks_map.find(data_hash) == blocks_map.end()) {
+	if ( blocks_map.find(data_hash) != blocks_map.end()) {
 		
 		return 0;// success;
 	}
@@ -32,6 +32,8 @@ int DeduplicateManager::put_block(uint64_t block_id, const byte* block_data) {
 		
 		for ( auto blob : blobs) {
 			
+			auto count = blob.get_blocks_count();
+
 			if (blob.get_blocks_count() < blob_size) {
 
 				saved_block_id = blob.save(block_id, block_data, block_size);
@@ -56,9 +58,15 @@ int DeduplicateManager::put_block(uint64_t block_id, const byte* block_data) {
 
 			blocks_map[data_hash] = &new_blob;
 
-			saved_block_id = new_blob.save(block_id, block_data, block_size);
-			saved_blob = &new_blob;		}		
+			saved_block_id = new_blob.save(block_id, block_data, block_size);
+
+			saved_blob = &new_blob;
+
+		}
+
 		blocks_ids_map[saved_block_id] = saved_blob;
+
+		auto count = saved_blob->get_blocks_count();
 
 		return 0;
 	}
@@ -68,11 +76,11 @@ int DeduplicateManager::put_block(uint64_t block_id, const byte* block_data) {
 
 int  DeduplicateManager::get_block( uint64_t block_id, byte* block_data) {
 
-	auto blob_block_ids = blocks_ids_map.find( block_id);
+	auto data = blocks_ids_map.find( block_id);
 
-	if ( blob_block_ids != blocks_ids_map.end()) {
+	if (data != blocks_ids_map.end()) {
 
-		auto blob_in_map = blob_block_ids->second;
+		auto blob_in_map = data->second;
 
 		for (auto blob : blobs) {
 			
