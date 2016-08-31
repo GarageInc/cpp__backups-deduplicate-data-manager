@@ -23,16 +23,16 @@ public:
 	int get_block(uint64_t block_id, byte* block_data);
 
 
-private:
+protected:
 
 	uint64_t block_size;
 	uint32_t blob_size;
 
-	// block data hash and blobs_ids(where search data)
-	std::unordered_map<uint64_t, std::vector<uint64_t>> blocks_map;
+	// block data hash and blob* as value(where search data)
+	std::unordered_map<uint64_t, Blob*> blocks_map;
 		
-	// id_block and pair<blob_id, block_id>
-	std::unordered_map<uint64_t, std::pair<uint32_t, uint32_t>> blocks_ids_map;
+	// block_id as key and blob* as value
+	std::unordered_map<uint64_t, Blob*> blocks_ids_map;
 
 	std::vector<Blob> blobs;
 

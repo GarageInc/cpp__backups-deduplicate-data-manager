@@ -7,19 +7,6 @@
 
 typedef unsigned char byte;
 
-static const char alphanum[] =
-"0123456789"
-"!@#$%^&*"
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-"abcdefghijklmnopqrstuvwxyz";
-
-int string_length = sizeof(alphanum) - 1;
-
-char genRandom()
-{
-
-	return alphanum[rand() % string_length];
-}
 
 class Blob
 {
@@ -28,15 +15,17 @@ public:
 	Blob(void);
 	~Blob(void);
 	
-	uint32_t id;
+	uint64_t id;
 
 	uint32_t get_block_data(uint64_t id_block, uint64_t block_size, byte *data);
 
 	uint32_t save(uint64_t block_id, const byte * block_data, uint64_t block_size);
 
 	uint32_t get_blocks_count();
-private:
 
+protected:
+
+	void init();
 	
 	char *file_name;
 

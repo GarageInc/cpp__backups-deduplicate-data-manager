@@ -2,16 +2,7 @@
 
 Blob::Blob(void)
 {
-
-	file_name = new  char[max_file_name_length]();
-	srand(time(0));
-
-	for (unsigned int i = 0; i < max_file_name_length; ++i)
-	{
-		file_name[i] = genRandom();
-	}
-
-	pFile = fopen(file_name, "wb");
+	init();
 }
 
 Blob::~Blob(void)
@@ -21,13 +12,34 @@ Blob::~Blob(void)
 	fclose( pFile);
 }
 
+void Blob::init() {
+
+	file_name = new  char[max_file_name_length]();
+	srand(time(0));
+
+	char alphanum[] =
+		"0123456789"
+		"!@#$%^&*"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
+
+	int string_length = sizeof(alphanum) - 1;
+
+	for (unsigned int i = 0; i < max_file_name_length; ++i)
+	{
+		file_name[i] = alphanum[rand() % string_length];
+	}
+
+	pFile = fopen(file_name, "a+b");
+}
+
 uint32_t Blob::get_block_data(uint64_t id_block, uint64_t block_size, byte *data) {
 
 	try {
 
-		Block *block;
+		Block *block = NULL;
 
-		for (int i = 0; i < blocks.size; i++) {
+		for (int i = 0; i < blocks.size(); i++) {
 			if (blocks[i].id == id_block) {
 				block = &blocks[i];
 				break;
@@ -58,7 +70,7 @@ uint32_t Blob::save(uint64_t block_id, const byte * block_data, uint64_t block_s
 
 	try {
 
-		uint64_t offset = block_size * blocks.size;
+		uint64_t offset = block_size * blocks.size();
 
 		fseek(pFile, offset, SEEK_SET);
 
@@ -83,5 +95,5 @@ uint32_t Blob::save(uint64_t block_id, const byte * block_data, uint64_t block_s
 }
 
 uint32_t Blob::get_blocks_count() {
-	return blocks.size;
+	return blocks.size();
 }
