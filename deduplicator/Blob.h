@@ -19,7 +19,7 @@ public:
 
 	uint32_t get_block_data(uint64_t id_block, uint64_t block_size, byte *data);
 
-	uint32_t save(uint64_t block_id, const byte * block_data, uint64_t block_size);
+	uint32_t save_block_data(uint64_t block_id, const byte * block_data, uint64_t block_size);
 
 	uint32_t get_blocks_count();
 
@@ -33,6 +33,5 @@ protected:
 	
 	FILE * pFile;
 
-	// save id_block and offset in file
 	std::vector<Block*> blocks;
 };

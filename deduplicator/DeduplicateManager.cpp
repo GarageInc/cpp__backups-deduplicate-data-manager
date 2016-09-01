@@ -1,6 +1,5 @@
 #include "DeduplicateManager.h"
 
-uint32_t blob_id_counter = 0;
 
 DeduplicateManager::DeduplicateManager(void)
 {
@@ -32,15 +31,15 @@ int DeduplicateManager::put_block(uint64_t block_id, const byte* block_data) {
 		
 		for ( auto blob : blobs) {
 			
-			auto count = blob.get_blocks_count();
+			auto count = blob->get_blocks_count();
 
-			if (blob.get_blocks_count() < blob_size) {
+			if (blob->get_blocks_count() < blob_size) {
 
-				saved_block_id = blob.save(block_id, block_data, block_size);
+				saved_block_id = blob->save_block_data(block_id, block_data, block_size);
 
 				if (saved_block_id != 0) {
 
-					saved_blob = &blob;
+					saved_blob = blob;
 					break;
 				} // pass
 			}// pass
@@ -51,16 +50,15 @@ int DeduplicateManager::put_block(uint64_t block_id, const byte* block_data) {
 			blocks_map[data_hash] = saved_blob;
 		} else {
 
-			Blob			new_blob;
-			new_blob.id = ++blob_id_counter;
+			Blob *new_blob = new Blob();
 
 			blobs.push_back(new_blob);
 
-			blocks_map[data_hash] = &new_blob;
+			blocks_map[data_hash] = new_blob;
 
-			saved_block_id = new_blob.save(block_id, block_data, block_size);
+			saved_block_id = new_blob->save_block_data(block_id, block_data, block_size);
 
-			saved_blob = &new_blob;
+			saved_blob = new_blob;
 
 		}
 
@@ -84,9 +82,9 @@ int  DeduplicateManager::get_block( uint64_t block_id, byte* block_data) {
 
 		for (auto blob : blobs) {
 			
-			if (blob.id == blob_in_map->id) {
+			if (blob->id == blob_in_map->id) {
 
-				blob.get_block_data(block_id, block_size, block_data);
+				blob->get_block_data(block_id, block_size, block_data);
 
 				return 0;
 			}

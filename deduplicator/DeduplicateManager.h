@@ -34,7 +34,7 @@ protected:
 	// block_id as key and blob* as value
 	std::unordered_map<uint64_t, Blob*> blocks_ids_map;
 
-	std::vector<Blob> blobs;
+	std::vector<Blob*> blobs;
 
 	uint64_t hash(const byte *block_data);
 };

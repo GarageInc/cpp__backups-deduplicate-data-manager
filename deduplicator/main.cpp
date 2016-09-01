@@ -61,6 +61,10 @@ int main(int argc, char *argv[])
 			// break;
 		}
 
+		while ( getchar() != '\n') {
+
+		}
+
 	}
 	
 	return 0;

@@ -1,5 +1,7 @@
 #include "Blob.h"
 
+uint32_t blob_id_counter = 0;
+
 Blob::Blob(void)
 {
 	init();
@@ -10,6 +12,8 @@ Blob::~Blob(void)
 	delete[] file_name;
 
 	fclose( pFile);
+
+	printf("\nDeleted blob: %d", id);
 }
 
 void Blob::init() {
@@ -28,6 +32,8 @@ void Blob::init() {
 	{
 		file_name[i] = alphanum[rand() % string_length];
 	}
+
+	id = ++blob_id_counter;
 
 	file_name[max_file_name_length - 1] = '\0';
 
@@ -67,7 +73,7 @@ uint32_t Blob::get_block_data(uint64_t id_block, uint64_t block_size, byte *data
 	}
 }
 
-uint32_t Blob::save(uint64_t block_id, const byte * block_data, uint64_t block_size) {
+uint32_t Blob::save_block_data(uint64_t block_id, const byte * block_data, uint64_t block_size) {
 
 	try {
 
@@ -79,10 +85,7 @@ uint32_t Blob::save(uint64_t block_id, const byte * block_data, uint64_t block_s
 
 		fflush(pFile);
 		
-		Block *block = new Block();
-
-		block->offset = offset;
-		block->id = block_id;
+		Block *block = new Block(block_id, offset);
 
 		blocks.push_back(block);
 		
