@@ -18,32 +18,35 @@ int main(int argc, char *argv[])
 	
 	while (true) {
 
-		printf("\nIf you want put block, press 0, if you want get block, press 1, press another for break...\n");
+		printf("\nPress 0, if you want put block, \npress 1 if you want get block, \npress another for break...\n");
 				
 		scanf("%c", &symbol);
 		
-		printf("[%c]", symbol);
-
 		if (symbol == '0' || symbol=='1') {
 
-			printf("Enter BLOCK_ID: ");
+			printf("\nEnter BLOCK_ID: ");
 			scanf("%ju", &block_id);
 
 			if (symbol == '0') {
 
-				printf("Please, enter data: ");
+				printf("\nPlease, enter data by length %ju: ", BLOK_SIZE);
 
 				scanf("%s", block_data);
 				
+				// dog-nail for output
 				block_data[BLOK_SIZE - 1] = '\0';
 
-				manager->put_block(block_id, block_data);
+				uint32_t relay = manager->put_block(block_id, block_data);
+			
+				if (relay != 0) {
+					printf("failed with code: %d", relay);
+				};
 			}
 			else {
 
 				uint32_t relay = manager->get_block(block_id, block_data);
 
-				if (relay == 0) {
+				if ( relay == 0) {
 
 					for (uint32_t i = 0; i < BLOK_SIZE - 1; i++) {
 
@@ -52,13 +55,13 @@ int main(int argc, char *argv[])
 				}
 				else {
 
-					printf("Fail by getting data.. :(\n");
+					printf("failed with code: %d", relay);
 				}
 			}
 
 		} else {
 
-			// break;
+			break;
 		}
 
 		while ( getchar() != '\n') {

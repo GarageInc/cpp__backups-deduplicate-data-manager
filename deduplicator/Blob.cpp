@@ -17,8 +17,27 @@ Blob::~Blob(void)
 }
 
 void Blob::init() {
+	
+	id = ++blob_id_counter;
+	
+	struct stat st;
+
+	int result = 0;
 
 	file_name = new  char[max_file_name_length]();
+
+	do {
+		generate_random_file_name(file_name, max_file_name_length);
+		result = stat(file_name, &st);
+		
+	} while (result == 0);
+
+	pFile = fopen(file_name, "wb+");
+}
+
+void Blob::generate_random_file_name(char* file_name, uint32_t max_file_name_length) {
+
+	// dog-nail for random fail name
 	srand(time(0));
 
 	char alphanum[] =
@@ -30,14 +49,11 @@ void Blob::init() {
 
 	for (unsigned int i = 0; i < max_file_name_length - 1; ++i)
 	{
-		file_name[i] = alphanum[rand() % string_length];
+		file_name[i] = alphanum[ rand() % string_length];
 	}
-
-	id = ++blob_id_counter;
 
 	file_name[max_file_name_length - 1] = '\0';
 
-	pFile = fopen(file_name, "a+");
 }
 
 uint32_t Blob::get_block_data(uint64_t id_block, uint64_t block_size, byte *data) {
@@ -73,29 +89,40 @@ uint32_t Blob::get_block_data(uint64_t id_block, uint64_t block_size, byte *data
 	}
 }
 
-uint32_t Blob::save_block_data(uint64_t block_id, const byte * block_data, uint64_t block_size) {
+uint64_t Blob::save_block_data(uint64_t block_id, const byte * block_data,const uint64_t block_size) {
 
 	try {
 
 		uint64_t offset = block_size * blocks.size();
 
 		fseek(pFile, offset, SEEK_SET);
+		/*
+		auto size_array = sizeof(block_data) * block_size / sizeof(byte);
 
-		fwrite(block_data, sizeof(byte), sizeof(block_data), pFile);
+		printf("\ndata: %s", block_data);
+		printf("\nsize of byte: %d", sizeof(byte));
+		printf("\nsize of block_data: %d", size_array);
+		*/
+		fwrite(block_data, sizeof(byte), block_size, pFile);
 
 		fflush(pFile);
 		
-		Block *block = new Block(block_id, offset);
-
-		blocks.push_back(block);
-		
-		return block->id;
+		return create_new_block(block_id, offset);
 
 	} catch( ...){
 	
 		return 0;
 	}
 
+}
+
+uint64_t Blob::create_new_block(uint64_t block_id, uint64_t block_offset) {
+
+	Block *block = new Block(block_id, block_offset);
+
+	blocks.push_back(block);
+
+	return block->id;
 }
 
 uint32_t Blob::get_blocks_count() {

@@ -29,7 +29,7 @@ protected:
 	uint32_t blob_size;
 
 	// block data hash and blob* as value(where search data)
-	std::unordered_map<uint64_t, Blob*> blocks_map;
+	std::unordered_map<uint64_t, Blob*> blocks_hash_map;
 		
 	// block_id as key and blob* as value
 	std::unordered_map<uint64_t, Blob*> blocks_ids_map;
